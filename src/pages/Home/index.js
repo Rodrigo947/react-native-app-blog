@@ -9,16 +9,26 @@ import {
 
 import { useNavigation } from "@react-navigation/native";
 import { Feather } from "@expo/vector-icons";
+import { useEffect, useState } from "react";
+import api from "../../services/api";
 
 export default function Home() {
   const navigation = useNavigation();
+
+  useEffect(() => {
+    async function loadData() {
+      const category = await api.get("/categories?populate=icon");
+      console.log(category.data);
+    }
+    loadData();
+  }, []);
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.name}>DevBlog</Text>
 
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate("Search")}>
           <Feather name="search" size={24} color="#FFF" />
         </TouchableOpacity>
       </View>
