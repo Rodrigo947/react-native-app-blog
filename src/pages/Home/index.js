@@ -13,10 +13,13 @@ import { Feather } from "@expo/vector-icons";
 import { useEffect, useState } from "react";
 import api from "../../services/api";
 import CategoryItem from "../../components/CategoryItem";
+import { setFavorite, getFavorite } from "../../services/favorite";
+import { FavoritePost } from "../../components/FavoritePost";
 
 export default function Home() {
   const navigation = useNavigation();
   const [categories, setCategories] = useState([]);
+  const [favCategory, setFavCategory] = useState([]);
 
   useEffect(() => {
     async function loadData() {
@@ -25,6 +28,23 @@ export default function Home() {
     }
     loadData();
   }, []);
+
+  useEffect(() => {
+    async function favorite() {
+      const response = await getFavorite();
+      setFavCategory(response);
+    }
+
+    favorite();
+  }, []);
+
+  // Favoritando uma categoria
+  async function handleFavorite(id) {
+    const response = await setFavorite(id);
+
+    setFavCategory(response);
+    console.log(response);
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -42,8 +62,23 @@ export default function Home() {
         style={styles.categories}
         data={categories}
         keyExtractor={(item) => String(item.id)}
-        renderItem={({ item }) => <CategoryItem data={item} />}
+        renderItem={({ item }) => (
+          <CategoryItem data={item} favorite={() => handleFavorite(item.id)} />
+        )}
       />
+
+      <View style={styles.main}>
+        {favCategory.length !== 0 && (
+          <FlatList
+            style={{ marginTop: 50, maxHeight: 100, paddingStart: 18 }}
+            data={favCategory}
+            horizontal={true}
+            showsHorizontalScrollIndicator={false}
+            keyExtractor={(item) => String(item.id)}
+            renderItem={({ item }) => <FavoritePost data={item} />}
+          />
+        )}
+      </View>
     </SafeAreaView>
   );
 }
