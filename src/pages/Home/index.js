@@ -14,7 +14,7 @@ import { useEffect, useState } from "react";
 import api from "../../services/api";
 import CategoryItem from "../../components/CategoryItem";
 import { setFavorite, getFavorite } from "../../services/favorite";
-import { FavoritePost } from "../../components/FavoritePost";
+import FavoritePost from "../../components/FavoritePost";
 
 export default function Home() {
   const navigation = useNavigation();

@@ -4,9 +4,10 @@ import api from "./api";
 // Buscar categoria favoritada
 export async function getFavorite() {
   const data = await AsyncStorage.getItem("@favCategory");
+
   if (data !== null) {
     const response = await api.get(
-      `categories/${data}?fileds=name&populate=posts,posts.cover`
+      `categories/${data}?fields=name&populate=posts,posts.cover`
     );
 
     return response.data?.data?.attributes?.posts?.data;
