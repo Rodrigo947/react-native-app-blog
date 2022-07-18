@@ -70,7 +70,12 @@ export default function Home() {
       <View style={styles.main}>
         {favCategory.length !== 0 && (
           <FlatList
-            style={{ marginTop: 50, maxHeight: 100, paddingStart: 18 }}
+            style={{
+              marginTop: 50,
+              maxHeight: 100,
+              paddingStart: 18,
+            }}
+            contentContainerStyle={{ paddingEnd: 18 }}
             data={favCategory}
             horizontal={true}
             showsHorizontalScrollIndicator={false}
@@ -78,6 +83,14 @@ export default function Home() {
             renderItem={({ item }) => <FavoritePost data={item} />}
           />
         )}
+        <Text
+          style={[
+            styles.title,
+            { marginTop: favCategory.length > 0 ? 14 : 46 },
+          ]}
+        >
+          Conteúdos em alta
+        </Text>
       </View>
     </SafeAreaView>
   );
@@ -107,5 +120,17 @@ const styles = StyleSheet.create({
     marginHorizontal: 18,
     borderRadius: 8,
     zIndex: 9,
+  },
+  main: {
+    backgroundColor: "#FFFFFF",
+    flex: 1,
+    marginTop: -30,
+  },
+  title: {
+    fontSize: 21,
+    paddingHorizontal: 18,
+    marginBottom: 14,
+    fontWeight: "bold",
+    color: "#162133",
   },
 });
