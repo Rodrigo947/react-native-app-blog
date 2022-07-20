@@ -1,9 +1,16 @@
+import { useNavigation } from "@react-navigation/native";
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
 
 export default function PostItem({ data }) {
+  const navigation = useNavigation();
+
+  function handleDetails() {
+    navigation.navigate("Detail", { id: data?.id });
+  }
+
   return (
-    <TouchableOpacity style={styles.container}>
+    <TouchableOpacity style={styles.container} onPress={handleDetails}>
       <View style={styles.header}>
         <Image
           style={styles.cover}
