@@ -1,5 +1,5 @@
 import { useRoute, useNavigation } from "@react-navigation/native";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useLayoutEffect } from "react";
 import {
   Text,
   StyleSheet,
@@ -7,8 +7,9 @@ import {
   Image,
   TouchableOpacity,
   ScrollView,
+  Share,
 } from "react-native";
-import { Feather } from "@expo/vector-icons";
+import { Feather, Entypo } from "@expo/vector-icons";
 import api from "../../services/api";
 
 export default function Detail() {
@@ -17,6 +18,8 @@ export default function Detail() {
 
   const [post, setPost] = useState({});
   const [links, setLinks] = useState([]);
+
+  const [modalVisible, setModalVisible] = useState(false);
 
   useEffect(() => {
     async function getPost() {
@@ -30,6 +33,46 @@ export default function Detail() {
     getPost();
   }, []);
 
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <TouchableOpacity onPress={handleShare}>
+          <Entypo name="share" size={25} color="#FFF" />
+        </TouchableOpacity>
+      ),
+    });
+  }, [navigation, post]);
+
+  async function handleShare() {
+    try {
+      const result = await Share.share({
+        message: `
+          Confere esse post : ${post?.attributes?.title}
+          
+          ${post?.attributes?.description}
+
+          Vi lá no app devpost!
+        `,
+      });
+
+      if (result.action === Share.sharedAction) {
+        if (result.activityType) {
+          console.log("Activity type");
+        } else {
+          console.log("Compartilhado com sucesso");
+        }
+      } else if (result.action === Share.dismissedAction) {
+        console.log("Modal Fechado");
+      }
+    } catch (error) {
+      console.log("ERROR");
+    }
+  }
+
+  function handleOpenLink(link) {
+    console.log(link);
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <Image
@@ -40,28 +83,30 @@ export default function Detail() {
         }}
       />
 
-      <ScrollView style={styles.title} showsHorizontalScrollIndicator={false}>
-        <Text style={styles.content}>{post?.attributes?.title}</Text>
+      <Text style={styles.title}>{post?.attributes?.title}</Text>
 
+      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         <Text style={styles.description}>{post?.attributes?.description}</Text>
 
-        <Text style={styles.links}>
-          {links.map((link) => (
-            <TouchableOpacity key={link.id}>
-              <Feather name="link" color="#1e4687" size={14} />
-              <Text>{link.name}</Text>
-            </TouchableOpacity>
-          ))}
-        </Text>
+        {links.length > 0 && <Text style={styles.subTitle}>Links</Text>}
+        {links.map((link) => (
+          <TouchableOpacity
+            key={link.id}
+            style={styles.linkButton}
+            onPress={() => handleOpenLink(link)}
+          >
+            <Feather name="link" color="#1e4687" size={14} />
+            <Text style={styles.linkText}>{link.name}</Text>
+          </TouchableOpacity>
+        ))}
       </ScrollView>
     </SafeAreaView>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#FFF",
     flex: 1,
+    backgroundColor: "#FFF",
   },
   cover: {
     width: "100%",
@@ -70,7 +115,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 18,
     fontWeight: "bold",
-    marginBottom: 14,
+    marginBottom: 18,
     marginTop: 18,
     paddingHorizontal: 12,
   },
@@ -90,5 +135,10 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 8,
+  },
+  linkText: {
+    color: "#1e4687",
+    fontSize: 16,
+    marginLeft: 6,
   },
 });
