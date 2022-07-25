@@ -8,9 +8,11 @@ import {
   TouchableOpacity,
   ScrollView,
   Share,
+  Modal,
 } from "react-native";
 import { Feather, Entypo } from "@expo/vector-icons";
 import api from "../../services/api";
+import LinkWeb from "../../components/LinkWeb";
 
 export default function Detail() {
   const route = useRoute();
@@ -20,6 +22,7 @@ export default function Detail() {
   const [links, setLinks] = useState([]);
 
   const [modalVisible, setModalVisible] = useState(false);
+  const [openLink, setOpenLink] = useState({});
 
   useEffect(() => {
     async function getPost() {
@@ -70,7 +73,8 @@ export default function Detail() {
   }
 
   function handleOpenLink(link) {
-    console.log(link);
+    setModalVisible(true);
+    setOpenLink(link);
   }
 
   return (
@@ -100,6 +104,14 @@ export default function Detail() {
           </TouchableOpacity>
         ))}
       </ScrollView>
+
+      <Modal animationType="slide" visible={modalVisible} transparent={true}>
+        <LinkWeb
+          link={openLink?.url}
+          title={openLink?.name}
+          closeModal={() => setModalVisible(false)}
+        />
+      </Modal>
     </SafeAreaView>
   );
 }

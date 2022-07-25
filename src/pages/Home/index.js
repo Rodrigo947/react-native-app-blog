@@ -51,7 +51,6 @@ export default function Home() {
     const response = await setFavorite(id);
 
     setFavCategory(response);
-    console.log(response);
   }
 
   return (
